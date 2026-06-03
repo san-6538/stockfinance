@@ -29,6 +29,10 @@ SAMPLES_DIR: Path = BACKEND_DIR / "samples" / "stocks"
 
 SCHEMA_PATH: Path = BACKEND_DIR / "warehouse" / "schema.sql"
 
+# Optional directory of built frontend assets to serve from the API itself
+# (single-service deploys). When set and present, the SPA is served at "/".
+STATIC_DIR: Path = _path("STATIC_DIR", BACKEND_DIR / "static")
+
 # Default universe shown in the UI. Users can analyze any valid ticker on top.
 DEFAULT_STOCKS: dict[str, str] = {
     "SBIN.NS": "State Bank of India",

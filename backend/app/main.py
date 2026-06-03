@@ -4,11 +4,12 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.db import init_db
 from app.routes import router
 from app.seed import seed_if_empty
-from app.settings import CORS_ORIGINS
+from app.settings import CORS_ORIGINS, STATIC_DIR
 from utils.logger import logger
 
 
@@ -38,7 +39,17 @@ app.add_middleware(
 
 app.include_router(router)
 
+# Serve the built frontend from the API itself (single-service deploy).
+# Mounted last so /api/* and /docs match first; "/" serves the SPA.
+if STATIC_DIR and STATIC_DIR.exists():
+    logger.info(f"Serving frontend from {STATIC_DIR}")
+    app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
+else:
 
-@app.get("/")
-def root() -> dict:
-    return {"service": "financial-data-platform", "docs": "/docs", "health": "/api/health"}
+    @app.get("/")
+    def root() -> dict:
+        return {
+            "service": "financial-data-platform",
+            "docs": "/docs",
+            "health": "/api/health",
+        }

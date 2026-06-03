@@ -1,0 +1,11 @@
+**/.venv/
+**/venv/
+**/__pycache__/
+**/*.pyc
+**/node_modules/
+**/dist/
+backend/data_lake/
+**/*.duckdb
+.git/
+.claude/
+cloudflared.exe
