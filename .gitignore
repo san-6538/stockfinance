@@ -11,6 +11,16 @@ venv/
 data_lake/
 *.duckdb
 *.parquet
+# ...but keep the bundled seed samples
+!backend/samples/**/*.parquet
+
+# Node / frontend build
+node_modules/
+dist/
+
+# Local tooling / agent config
+.claude/
+cloudflared.exe
 
 # OS specific
 .DS_Store

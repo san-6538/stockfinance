@@ -4,3 +4,6 @@ yfinance
 pyarrow
 duckdb
 loguru
+fastapi
+uvicorn[standard]
+pydantic>=2

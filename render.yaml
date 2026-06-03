@@ -1,0 +1,54 @@
+# Render Blueprint — one-click deploy of backend (Docker) + frontend (static).
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Steps:
+#   1. Push this repo to GitHub.
+#   2. Render Dashboard → New → Blueprint → pick this repo.
+#   3. After the first deploy, if your backend URL differs from the one below,
+#      update VITE_API_URL on the frontend service and redeploy it.
+
+services:
+  # ---- Backend API (FastAPI in Docker) ----
+  - type: web
+    name: fdp-backend
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATA_DIR
+        value: /data
+      - key: DB_PATH
+        value: /data/analytics/warehouse.duckdb
+      - key: SEED_ON_STARTUP
+        value: "true"
+      - key: CORS_ORIGINS
+        value: "*"
+    # Persistent storage for the DuckDB file. NOTE: disks require a paid
+    # instance type. On the free plan the warehouse is ephemeral and simply
+    # re-seeds on each cold start. To persist, bump `plan` and uncomment:
+    # disk:
+    #   name: warehouse
+    #   mountPath: /data
+    #   sizeGB: 1
+
+  # ---- Frontend (static site built by Vite) ----
+  - type: web
+    name: fdp-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      # Backend hostname injected automatically at build time (api.ts prepends
+      # https://). No manual URL editing needed after deploy.
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: fdp-backend
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

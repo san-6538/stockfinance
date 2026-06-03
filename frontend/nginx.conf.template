@@ -1,0 +1,25 @@
+# Rendered at container start: ${NGINX_PORT} and ${BACKEND_ORIGIN} are
+# substituted from env; nginx runtime vars ($host, $uri, ...) are preserved.
+server {
+    listen       ${NGINX_PORT};
+    server_name  _;
+    root         /usr/share/nginx/html;
+    index        index.html;
+
+    # Proxy API + docs to the backend service.
+    location /api/ {
+        proxy_pass         ${BACKEND_ORIGIN};
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_read_timeout 120s;
+    }
+    location = /docs        { proxy_pass ${BACKEND_ORIGIN}; }
+    location = /openapi.json { proxy_pass ${BACKEND_ORIGIN}; }
+
+    # SPA fallback.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

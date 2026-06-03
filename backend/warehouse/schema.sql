@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS stock_analytics (
     returns DOUBLE,
     ma_20 DOUBLE,
     ma_50 DOUBLE,
-    volatility DOUBLE
+    volatility DOUBLE,
+    PRIMARY KEY (date, ticker)
 );
