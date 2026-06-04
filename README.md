@@ -87,7 +87,7 @@ cd backend && python main.py
 Ranges: `1M, 3M, 6M, 1Y, 3Y, 5Y, MAX`.
 
 ## Deploying
-
+live at : https://stockfinance.onrender.com
 See **[DEPLOY.md](DEPLOY.md)** for Render, Railway, Fly.io, and single-host instructions.
 The same Docker images run unchanged on any host. Configuration is via environment
 variables (`DATA_DIR`, `DB_PATH`, `CORS_ORIGINS`, `VITE_API_URL`, …).
